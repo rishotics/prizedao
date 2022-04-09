@@ -10,9 +10,16 @@ import TaskDetail from './views/TaskDetail';
 import CreateSubmission from './views/CreateSubmission';
 
 function App() {
+  const [ethWallet, setEthWallet] = useState('');
+  const [maticBalance, setmaticBalance] = useState('');
+
   return (
     <HashRouter>
-      <Navbar />
+      <Navbar
+        ethWallet={ethWallet}
+        setEthWallet={setEthWallet}
+        maticBalance={maticBalance}
+        setmaticBalance={setmaticBalance}  />
       <Routes>
         <Route
           path="/create-task"

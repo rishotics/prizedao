@@ -6,6 +6,8 @@ import Navbar from './components/layout/Navbar';
 import Home from './views/Home';
 import CreateTask from './views/CreateTask';
 import LisfofTasks from './views/LisfofTasks';
+import TaskDetail from './views/TaskDetail';
+import CreateSubmission from './views/CreateSubmission';
 
 function App() {
   return (
@@ -20,6 +22,14 @@ function App() {
           path="/tasks"
           element={
             <LisfofTasks />} />
+        <Route
+          path="/task"
+          element={
+            <TaskDetail />} />
+        <Route
+          path="/create-submission"
+          element={
+            <CreateSubmission />} />
         <Route
           path="/"
           element={

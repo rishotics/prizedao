@@ -7,6 +7,7 @@ const client = new NFTStorage({ token: NFT_STRORAGE_APIKEY })
 
 function CreateTask() {
     const [name, setName] = useState('')
+    const [prize, setPrize] = useState('')
     const [description, setDescription] = useState('')
     const [loading, setLoading] = useState(false)
     const [image, setImage] = useState('')
@@ -41,14 +42,28 @@ function CreateTask() {
     return (
         <div className="container">
             <div className="card card-body m-auto mt-4" style={{ maxWidth: "600px"}}>
-                <h2>Create Task</h2>
+                <h2>Create Bounty</h2>
                 <div className="mb-3">
                     <label htmlFor="name" className="form-label">Name</label>
                     <input className="form-control" id="name" onChange={(e) => setName(e.target.value)}/>
                 </div>
                 <div className="mb-3">
+                    <label htmlFor="prize" className="form-label">Prize Amount (MATIC)</label>
+                    <input className="form-control" id="prize" onChange={(e) => setPrize(e.target.value)}/>
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="duration" className="form-label">Duration</label>
+                    <select className="form-select" aria-label="Default select example">
+                        <option >Select Duration</option>
+                        <option value="1">24 Hours</option>
+                        <option value="2">48 Hours</option>
+                        <option value="3">1 Mouth</option>
+                        <option value="4">3 Mouths</option>
+                    </select>
+                </div>
+                <div className="mb-3">
                     <label htmlFor="description" className="form-label">Description</label>
-                    <textarea className="form-control" id="description" rows="7" onChange={(e) => setDescription(e.target.value)}></textarea>
+                    <textarea className="form-control" id="description" rows="5" onChange={(e) => setDescription(e.target.value)}></textarea>
                 </div>
                 <div className="mb-3">
                     <label htmlFor="formFileMultiple" className="form-label">

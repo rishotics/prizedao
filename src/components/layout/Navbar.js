@@ -15,10 +15,10 @@ function Navbar() {
                         <Link className="nav-link" aria-current="page" to="/">Home</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" aria-current="page" to="/tasks">Tasks</Link>
+                        <Link className="nav-link" aria-current="page" to="/tasks">Bounties</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" aria-current="page" to="/create-task">Create Task</Link>
+                        <Link className="nav-link" aria-current="page" to="/create-task">Create Bounty</Link>
                     </li>
                 </ul>
                 <button className="btn btn-outline-light" type="submit">Connect to Wallet</button>

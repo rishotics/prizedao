@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 function LisfofTasks() {
+    const navigate = useNavigate();
+
     const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
@@ -25,13 +28,13 @@ function LisfofTasks() {
                         <div className="card">
                             <img src={task.url} className="card-img-top" alt="Cover Photo" />
                             <div className="card-body">
-                            <h5 className="card-title">{task.name}</h5>
-                            <p className="card-text">
-                                {task.description}
-                            </p>
-                            <button className="btn btn-primary">
-                                View
-                            </button>
+                                <h5 className="card-title">{task.name}</h5>
+                                <p className="card-text">
+                                    {task.description}
+                                </p>
+                                <button className="btn btn-primary" onClick={() => navigate('/task')}>
+                                    View
+                                </button>
                             </div>
                         </div>
                     </div>

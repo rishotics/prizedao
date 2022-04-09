@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "./strings.sol";
 
 /**
  * @dev Extension of {Governor} for simple, 3 options, vote counting.

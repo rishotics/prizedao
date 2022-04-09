@@ -5,7 +5,7 @@ import { NFT_STRORAGE_APIKEY } from '../config'
 
 const client = new NFTStorage({ token: NFT_STRORAGE_APIKEY })
 
-function CreateTask() {
+function CreateTask({ govContract }) {
     const [name, setName] = useState('')
     const [prize, setPrize] = useState('')
     const [description, setDescription] = useState('')
@@ -32,7 +32,16 @@ function CreateTask() {
 
             console.log(metadata)
             seturl(metadata.url)
-            setLoading(false);
+
+            // string memory _name, 
+            // string memory _startDate,
+            // string memory _endDate, 
+            // uint _prizeMoney
+            const transaction = await govContract.add_hackathon(metadata.url, "April 9", "April 20", (+prize * 10 ** 18).toString())
+            const tx = await transaction.wait()
+            console.log(tx)
+
+            setLoading(false)
         } catch(error) {
             console.error(error)
             setLoading(false)

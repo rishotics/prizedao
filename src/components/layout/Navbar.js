@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom'
 import { ethers } from 'ethers'
 import Web3Modal from 'web3modal'
 
-import { COVALENT_APIKEY } from '../../config'
+import { COVALENT_APIKEY, GOVERNOR_CONTRACT_ADDRESS } from '../../config'
+import GovernorCountingSimpleSelf from '../../artifacts/contracts/GovernorCountingSimpleSelf.sol/GovernorCountingSimpleSelf.json';
 
-function Navbar({ ethWallet, setEthWallet, maticBalance, setmaticBalance }) {
+function Navbar({ ethWallet, setEthWallet, maticBalance, setmaticBalance, setGovContract }) {
     const loadBlockchain = async () => {
         const web3Modal = new Web3Modal();
         const connection = await web3Modal.connect();
@@ -15,6 +16,12 @@ function Navbar({ ethWallet, setEthWallet, maticBalance, setmaticBalance }) {
         const signer = provider.getSigner();
         const address = await signer.getAddress();
         setEthWallet(address);
+
+        let contract = new ethers.Contract(GOVERNOR_CONTRACT_ADDRESS, GovernorCountingSimpleSelf.abi, signer);
+        setGovContract(contract);
+
+        const res = await contract.hackathonId()
+        console.log(res.toString())
 
         const balances = await fetch(`https://api.covalenthq.com/v1/80001/address/${address}/balances_v2/?key=${COVALENT_APIKEY}`);
         const { data } = await balances.json();

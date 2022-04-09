@@ -12,6 +12,7 @@ import CreateSubmission from './views/CreateSubmission';
 function App() {
   const [ethWallet, setEthWallet] = useState('');
   const [maticBalance, setmaticBalance] = useState('');
+  const [govContract, setGovContract] = useState('');
 
   return (
     <HashRouter>
@@ -19,24 +20,29 @@ function App() {
         ethWallet={ethWallet}
         setEthWallet={setEthWallet}
         maticBalance={maticBalance}
-        setmaticBalance={setmaticBalance}  />
+        setmaticBalance={setmaticBalance}
+        setGovContract={setGovContract}  />
       <Routes>
         <Route
           path="/create-task"
           element={
-            <CreateTask />} />
+            <CreateTask
+              govContract={govContract} />} />
         <Route
           path="/tasks"
           element={
-            <LisfofTasks />} />
+            <LisfofTasks
+              govContract={govContract}/>} />
         <Route
-          path="/task"
+          path="/task/:id"
           element={
-            <TaskDetail />} />
+            <TaskDetail
+              govContract={govContract} />} />
         <Route
-          path="/create-submission"
+          path="/create-submission/:hackathonid/:userid"
           element={
-            <CreateSubmission />} />
+            <CreateSubmission
+              govContract={govContract} />} />
         <Route
           path="/"
           element={

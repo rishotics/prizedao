@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { NFTStorage, File } from 'nft.storage'
 
 import { NFT_STRORAGE_APIKEY } from '../config'
 
 const client = new NFTStorage({ token: NFT_STRORAGE_APIKEY })
 
-function CreateSubmission() {
+function CreateSubmission({ govContract }) {
+    const { hackathonid, userid } = useParams()
+
     const [name, setName] = useState('')
     const [githubURL, setGithubURL] = useState('')
     const [videoURL, setVideoURL] = useState('')
@@ -31,9 +34,16 @@ function CreateSubmission() {
             );
 
             const metadata = await client.storeDirectory(files);
-
             console.log(metadata)
             seturl(metadata)
+
+            // uint256 _hackerId,
+            // string memory _ipfsHash,
+            // uint256 _hackathonId
+            const transaction = await govContract.add_submission(userid, metadata, hackathonid)
+            const tx = await transaction.wait()
+            console.log(tx)
+
             setLoading(false);
         } catch(error) {
             console.error(error)

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-function TaskDetail({ govContract }) {
+function TaskDetail({ govContract, pDaoContract }) {
     const { id } = useParams()
     const navigate = useNavigate()
 
@@ -41,6 +41,9 @@ function TaskDetail({ govContract }) {
         data = await data.json()
         console.log(data)
         setSubmissions([data])
+
+        const res = await pDaoContract._daiToken()
+        console.log(res)
     }
 
     const getIfRegistedForHackathon = async () => {

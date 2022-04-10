@@ -3,10 +3,20 @@ import { Link } from 'react-router-dom'
 import { ethers } from 'ethers'
 import Web3Modal from 'web3modal'
 
-import { COVALENT_APIKEY, GOVERNOR_CONTRACT_ADDRESS } from '../../config'
+import { COVALENT_APIKEY, GOVERNOR_CONTRACT_ADDRESS, DAI_ADDRESS, PDAO_ADRESS } from '../../config'
 import GovernorCountingSimpleSelf from '../../artifacts/contracts/GovernorCountingSimpleSelf.sol/GovernorCountingSimpleSelf.json';
+import Dai from '../../artifacts/contracts/Test_Dai.sol/Dai.json';
+import PrizeDAOGovernor from '../../artifacts/contracts/PrizeDAOGovernor.sol/PrizeDAOGovernor.json';
 
-function Navbar({ ethWallet, setEthWallet, maticBalance, setmaticBalance, setGovContract }) {
+function Navbar({ 
+    ethWallet,
+    setEthWallet,
+    maticBalance,
+    setmaticBalance,
+    setGovContract,
+    setDaiContract,
+    setPDaoContract
+}) {
     const loadBlockchain = async () => {
         const web3Modal = new Web3Modal();
         const connection = await web3Modal.connect();
@@ -19,6 +29,12 @@ function Navbar({ ethWallet, setEthWallet, maticBalance, setmaticBalance, setGov
 
         let contract = new ethers.Contract(GOVERNOR_CONTRACT_ADDRESS, GovernorCountingSimpleSelf.abi, signer);
         setGovContract(contract);
+
+        let contract1 = new ethers.Contract(DAI_ADDRESS, Dai.abi, signer);
+        setDaiContract(contract1);
+
+        let contract2 = new ethers.Contract(PDAO_ADRESS, PrizeDAOGovernor.abi, signer);
+        setPDaoContract(contract2);
 
         const res = await contract.hackathonId()
         console.log(res.toString())
@@ -47,6 +63,9 @@ function Navbar({ ethWallet, setEthWallet, maticBalance, setmaticBalance, setGov
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" aria-current="page" to="/create-task">Create Bounty</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" aria-current="page" to="/faucet">Faucet</Link>
                         </li>
                     </ul>
                     {maticBalance &&  <span className="badge bg-primary me-3">{maticBalance / 10 ** 18} MATIC</span>}

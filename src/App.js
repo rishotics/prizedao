@@ -8,11 +8,14 @@ import CreateTask from './views/CreateTask';
 import LisfofTasks from './views/LisfofTasks';
 import TaskDetail from './views/TaskDetail';
 import CreateSubmission from './views/CreateSubmission';
+import Faucet from './views/Faucet';
 
 function App() {
   const [ethWallet, setEthWallet] = useState('');
   const [maticBalance, setmaticBalance] = useState('');
   const [govContract, setGovContract] = useState('');
+  const [daiContract, setDaiContract] = useState('');
+  const [pDaoContract, setPDaoContract] = useState(null)
 
   return (
     <HashRouter>
@@ -21,7 +24,9 @@ function App() {
         setEthWallet={setEthWallet}
         maticBalance={maticBalance}
         setmaticBalance={setmaticBalance}
-        setGovContract={setGovContract}  />
+        setGovContract={setGovContract}
+        setDaiContract={setDaiContract}
+        setPDaoContrac={setPDaoContract}  />
       <Routes>
         <Route
           path="/create-task"
@@ -37,12 +42,19 @@ function App() {
           path="/task/:id"
           element={
             <TaskDetail
-              govContract={govContract} />} />
+              govContract={govContract}
+              pDaoContract={pDaoContract} />} />
         <Route
           path="/create-submission/:hackathonid/:userid"
           element={
             <CreateSubmission
               govContract={govContract} />} />
+        <Route
+          path="/faucet"
+          element={
+            <Faucet
+              ethWallet={ethWallet}
+              daiContract={daiContract} />} />
         <Route
           path="/"
           element={

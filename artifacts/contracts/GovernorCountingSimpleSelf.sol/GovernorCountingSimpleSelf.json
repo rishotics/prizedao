@@ -100,6 +100,11 @@
               "internalType": "address",
               "name": "sponsorAddress",
               "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "blockNum",
+              "type": "uint256"
             }
           ],
           "indexed": false,
@@ -653,9 +658,33 @@
           "internalType": "address",
           "name": "sponsorAddress",
           "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "blockNum",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_hackathonId",
+          "type": "uint256"
+        }
+      ],
+      "name": "hackerHasRegisteredBefore",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -715,6 +744,11 @@
           "internalType": "address",
           "name": "sponsorAddress",
           "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "blockNum",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",

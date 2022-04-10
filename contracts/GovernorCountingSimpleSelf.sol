@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (governance/extensions/GovernorCountingSimple.sol)
 
 pragma solidity ^0.8.0;
 
@@ -8,19 +7,10 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 /**
- * @dev Extension of {Governor} for simple, 3 options, vote counting.
- *
- * _Available since v4.3._
+ * @dev Extension of {Governor}. Adapted from OpenZepplin and modified to our use case
  */
 abstract contract GovernorCountingSimpleSelf is Governor{
-    /**
-     * @dev Supported vote types. Matches Governor Bravo ordering.
-     */
-    enum VoteType {
-        Against,
-        For,
-        Abstain
-    }
+    
     using Counters for Counters.Counter;
     Counters.Counter public hackathonId;
     Counters.Counter public hackerId;
@@ -47,9 +37,6 @@ abstract contract GovernorCountingSimpleSelf is Governor{
     }
 
     struct ProposalVote {
-        // uint256 againstVotes;
-        // uint256 forVotes;
-        // uint256 abstainVotes;
         uint256 [] hackerIdToVotesGot;
         mapping(address => bool) hasVoted;
     }
@@ -59,7 +46,6 @@ abstract contract GovernorCountingSimpleSelf is Governor{
     mapping ( uint256 => uint256 ) public ProposalIdToHackathonId;
     mapping ( uint256 => bool ) proposalState;
     mapping(uint256 => ProposalVote) private _proposalVotes;
-    // mapping ( uint256 => uint256 ) public hackerIndexToHackerId;
 
     event HackathonCreated(uint256 HackathonId);
     event HackerRegisted(uint256 HackerId);
@@ -81,7 +67,8 @@ abstract contract GovernorCountingSimpleSelf is Governor{
         address payable _sponsorAddress
         ) 
     public 
-    returns (uint) {
+    returns (uint) 
+    {
                 hackathonId.increment();
 
                 Hackathon storage hackathon = hackathonIdToHackathon[hackathonId.current()];

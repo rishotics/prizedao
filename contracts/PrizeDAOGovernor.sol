@@ -37,7 +37,7 @@ contract PrizeDAOGovernor is
         Governor(_name)
         GovernorSettings(
             0, /* 0 block by default for testing */
-            10, /* 15 sec */
+            25, /* 15 sec */
             0
         )
         GovernorVotes(_token)
@@ -45,12 +45,6 @@ contract PrizeDAOGovernor is
     {
         _daiToken = _tokenToAccept;
         _governanceToken = address(_token);
-    }
-
-    function giveApproval(uint256 _amount, address payable _spender) public {
-        
-        IERC20(_daiToken).approve(_spender, _amount);
-        
     }
 
     function addMember(uint256 _amount) public {
@@ -64,7 +58,7 @@ contract PrizeDAOGovernor is
     }
 
     function setWinnerAddress(uint256 _hackathonId) public {
-        uint amount;
+        uint256 amount;
         (winnerAddress, amount) = _setWinnerAddress(_hackathonId);
         disburseIncentive(amount, winnerAddress);
     }
@@ -75,20 +69,16 @@ contract PrizeDAOGovernor is
         bytes[] memory calldatas,
         string memory description,
         uint256 hackathonId
-    ) public returns (uint256) 
-    {
+    ) public returns (uint256) {
         _addNoneOfTheseHacker(hackathonId);
         uint256 proposalId = propose(targets, values, calldatas, description);
         _mapProposalIdToHackathonId(hackathonId, proposalId);
         return proposalId;
     }
 
-    function disburseIncentive(
-        uint256 _amount,
-        address _user
-    ) public {
+    function disburseIncentive(uint256 _amount, address _user) public {
         require(winnerAddress != address(0), "Proposal not accepted");
-        ERC20Interface(_governanceToken).mint(address(_user), _amount*10);
+        ERC20Interface(_governanceToken).mint(address(_user), _amount * 10);
     }
 
     function receiveEthForTransactions() public payable {
@@ -97,27 +87,20 @@ contract PrizeDAOGovernor is
     }
 
     function getHackerSubmission(uint256 _proposalId, uint256 _hackerId)
-    public
-    view
-    returns(string memory) {
+        public
+        view
+        returns (string memory)
+    {
         return _getHackerSubmission(_proposalId, _hackerId);
     }
 
-    function getProposalId(uint256 _hackathonId)
-    public
-    view
-    returns(uint256){
+    function getProposalId(uint256 _hackathonId) public view returns (uint256) {
         return _getProposalId(_hackathonId);
     }
 
-
-    function getBlockNumber(uint256 _proposalId)
-    public
-    view
-    returns(uint256){
+    function getBlockNumber(uint256 _proposalId) public view returns (uint256) {
         return _getBlockNumber(_proposalId);
     }
-
 
     function votingDelay()
         public

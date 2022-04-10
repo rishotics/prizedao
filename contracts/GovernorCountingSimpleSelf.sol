@@ -39,17 +39,8 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         Hacker[] hackers;
         string startDate;
         string endDate;
+        uint256 proposalId;
     }
-
-    mapping ( uint256 => Hackathon ) public hackathonIdToHackathon;
-    mapping ( uint256 => Hackathon ) public hackerIdToHackathon;
-    mapping ( uint256 => uint256 ) public ProposalIdToHackathonId;
-
-    event HackathonCreated(uint256 HackathonId);
-    event HackerRegisted(uint256 HackerId);
-    event SubmissionDone(uint256 HackerId);
-    event HackathonEvent( Hackathon hackathon);
-
 
     struct ProposalVote {
         // uint256 againstVotes;
@@ -59,8 +50,19 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         mapping(address => bool) hasVoted;
     }
 
+    mapping ( uint256 => Hackathon ) public hackathonIdToHackathon;
+    mapping ( uint256 => Hackathon ) public hackerIdToHackathon;
+    mapping ( uint256 => uint256 ) public ProposalIdToHackathonId;
+    mapping ( uint256 => bool ) proposalState;
     mapping(uint256 => ProposalVote) private _proposalVotes;
+    // mapping ( uint256 => uint256 ) public hackerIndexToHackerId;
 
+    event HackathonCreated(uint256 HackathonId);
+    event HackerRegisted(uint256 HackerId);
+    event SubmissionDone(uint256 HackerId);
+    event HackathonEvent( Hackathon hackathon);
+    event HackerIpfsSubmission( string hackerIpfsSubmission);
+    event CurrentProposalID( uint256 currentProposalID);
 
     function add_hackathon(
         string memory _name, 
@@ -147,9 +149,22 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         emit SubmissionDone(_hackerId);
     }
 
+    function _getHackerSubmission(uint256 _proposalId, uint256 _hackerId)
+    internal
+    returns(string memory){
+        string memory submissionIpfsHash;
+        Hackathon storage hackathon = hackathonIdToHackathon[ProposalIdToHackathonId[_proposalId]];
+        Hacker[] storage hackers = hackathon.hackers;
+        for (uint256 i = 0; i <= hackers.length; i ++){
+            if(hackers[i].hackerId == _hackerId){
+                submissionIpfsHash = hackers[i].ipfsHash;
+                break;
+            }
+        }
+        emit HackerIpfsSubmission(submissionIpfsHash);
+        return submissionIpfsHash;
+    }
 
-
-    
 
     /**
      * @dev See {IGovernor-COUNTING_MODE}.
@@ -166,22 +181,6 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         return _proposalVotes[proposalId].hasVoted[account];
     }
 
-    /**
-     * @dev Accessor to the internal vote counts.
-     */
-    // function proposalVotes(uint256 proposalId)
-    //     public
-    //     view
-    //     virtual
-    //     returns (
-    //         uint256 againstVotes,
-    //         uint256 forVotes,
-    //         uint256 abstainVotes
-    //     )
-    // {
-    //     ProposalVote storage proposalvote = _proposalVotes[proposalId];
-    //     return (proposalvote.againstVotes, proposalvote.forVotes, proposalvote.abstainVotes);
-    // }
     
     /**
      * @dev See {Governor-_quorumReached}.
@@ -206,6 +205,15 @@ abstract contract GovernorCountingSimpleSelf is Governor {
     function _mapProposalIdToHackathonId(uint256 _hackathonId, uint256 _proposalId) 
     internal {
         ProposalIdToHackathonId[_proposalId] = _hackathonId;
+        hackathonIdToHackathon[_hackathonId].proposalId = _proposalId;
+    }
+
+    function _getProposalId(uint256 _hackathonId)
+    internal
+    returns(uint256){
+        uint256 proposalId = hackathonIdToHackathon[_hackathonId].proposalId;
+        emit CurrentProposalID(proposalId);
+        return proposalId;
     }
 
 
@@ -254,16 +262,6 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         else{
             revert("GovernorVotingSimple: invalid value for enum VoteType");
         }
-        
-        
-        // if (support == 0) {
-        //     proposalvote.againstVotes += weight;
-        // } else if (support == 1) {
-        //     proposalvote.forVotes += weight;
-        // } else if (support == 2) {
-        //     proposalvote.abstainVotes += weight;
-        // } else {
-        //     revert("GovernorVotingSimple: invalid value for enum VoteType");
-        // }
+     
     }
 }

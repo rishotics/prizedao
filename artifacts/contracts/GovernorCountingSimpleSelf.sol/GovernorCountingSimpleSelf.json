@@ -9,6 +9,19 @@
         {
           "indexed": false,
           "internalType": "uint256",
+          "name": "currentProposalID",
+          "type": "uint256"
+        }
+      ],
+      "name": "CurrentProposalID",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
           "name": "HackathonId",
           "type": "uint256"
         }
@@ -77,6 +90,11 @@
               "internalType": "string",
               "name": "endDate",
               "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "proposalId",
+              "type": "uint256"
             }
           ],
           "indexed": false,
@@ -86,6 +104,19 @@
         }
       ],
       "name": "HackathonEvent",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "hackerIpfsSubmission",
+          "type": "string"
+        }
+      ],
+      "name": "HackerIpfsSubmission",
       "type": "event"
     },
     {
@@ -537,6 +568,11 @@
           "internalType": "string",
           "name": "endDate",
           "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "proposalId",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -589,6 +625,11 @@
           "internalType": "string",
           "name": "endDate",
           "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "proposalId",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",

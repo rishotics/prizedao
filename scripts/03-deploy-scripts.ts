@@ -15,7 +15,7 @@ const main = async () => {
   console.log("tokenContract", tokenContract.address);
   console.log("[LOG] Token contract deployed");
 
-//   await tokenContract.delegate(accounts[0].getAddress());
+  await tokenContract.delegate(accounts[0].getAddress());
 
   const PrizeDAOGovernorContract = await prizeDAOFactory.deploy(
     tokenContract.address,
@@ -25,14 +25,14 @@ const main = async () => {
   await PrizeDAOGovernorContract.deployed();
   console.log("PrizeDAOGovernorContract address", PrizeDAOGovernorContract.address);
 
-  var txn = await PrizeDAOGovernorContract.receiveEthForTransactions({
-    value: ethers.utils.parseEther("1"),
-  });
+    var txn = await PrizeDAOGovernorContract.receiveEthForTransactions({
+        value: ethers.utils.parseEther("5"),
+    });
 
-  await txn.wait();
+    await txn.wait();
 
-  var txn = await tokenContract.setMinterRole(PrizeDAOGovernorContract.address);
-  await txn.wait();
+    var txn = await tokenContract.setMinterRole(PrizeDAOGovernorContract.address);
+    await txn.wait();
 
     var txn = await PrizeDAOGovernorContract.add_hackathon(
         "Test1",
@@ -75,7 +75,7 @@ const main = async () => {
         (event: any) => event.event === "HackathonEvent"
       );
     const [HackerId2hk] = event2hk.args;
-    console.log("Hackathon is: ", HackerId2hk);
+    // console.log("Hackathon is: ", HackerId2hk);
 
 
     var txn = await PrizeDAOGovernorContract.add_submission(
@@ -107,6 +107,7 @@ const main = async () => {
           [1]
         );
 
+        
     var txn = await PrizeDAOGovernorContract.createProposal(
             [PrizeDAOGovernorContract.address],
             [0],
@@ -122,84 +123,102 @@ const main = async () => {
     console.log("Proposal Id: ", proposalId)
 
 
+// Get HackerIpfsSubmission
+    var txn = await PrizeDAOGovernorContract.getHackerSubmission(proposalId, HackerId4);
+    var rc = await txn.wait();
+    const e1 = rc.events.find(
+        (event: any) => event.event === "HackerIpfsSubmission"
+        );
+    const [hackerIpfsSubmission] = e1.args;
+    console.log("hackerIpfsSubmission : ", hackerIpfsSubmission)
+
+
+    // Get CurrentProposalID
+    var txn = await PrizeDAOGovernorContract.getProposalId(HackathonId);
+    var rc = await txn.wait();
+    const e2 = rc.events.find(
+        (event: any) => event.event === "CurrentProposalID"
+        );
+    const [currproposalId1] = e2.args;
+    console.log("CurrentProposalID : ", currproposalId1)
+
     
 
+    // var name = await PrizeDAOGovernorContract.name();
+    // console.log("name : ", name);
 
-    var name = await PrizeDAOGovernorContract.name();
-    console.log("name : ", name);
-
-    var version = await PrizeDAOGovernorContract.version();
-    console.log("version : ", version);
-
-
-    var countingMode = await PrizeDAOGovernorContract.COUNTING_MODE();
-    console.log("countingMode : ", countingMode);
-
-    var votingDelay = await PrizeDAOGovernorContract.votingDelay();
-    console.log("votingDelay : ", votingDelay);
-
-    var votingPeriod = await PrizeDAOGovernorContract.votingPeriod();
-    console.log("votingPeriod : ", votingPeriod);
-
-    var proposalSnapshot = await PrizeDAOGovernorContract.proposalSnapshot(proposalId);
-    console.log("proposalSnapshot : ", proposalSnapshot);
-
-    var proposalDeadline = await PrizeDAOGovernorContract.proposalDeadline(proposalId);
-    console.log("proposalDeadline : ", proposalDeadline);
-
-    var blockNum = await ethers.provider.getBlockNumber();
-    var quorum = await PrizeDAOGovernorContract.quorum(blockNum - 1);
-    console.log("quorum : ", quorum);
-
-    var getVotes = await PrizeDAOGovernorContract.getVotes(
-        accounts[0].getAddress(),
-        blockNum - 1
-    );
-    console.log("accounts[0].getAddress(),", accounts[0].getAddress());
-    console.log("getVotes for address 0 : ", getVotes);
-
-    var getVotes2 = await PrizeDAOGovernorContract.getVotes(
-        accounts[1].getAddress(),
-        blockNum - 1
-    );
-    console.log("getVotes for address 1: ", getVotes2);
+    // var version = await PrizeDAOGovernorContract.version();
+    // console.log("version : ", version);
 
 
-    var txn = await PrizeDAOGovernorContract.castVote(proposalId, 1);
-    var rc = await txn.wait();
-    const voteEvent = rc.events.find((event: any) => event.event === "VoteCast");
-    console.log("voteEvent : ", voteEvent.args);
+    // var countingMode = await PrizeDAOGovernorContract.COUNTING_MODE();
+    // console.log("countingMode : ", countingMode);
 
-    var blockNum = await ethers.provider.getBlockNumber();
-    console.log("blockNum", blockNum);
-    await sleep(3000);
-    var state = await PrizeDAOGovernorContract.state(proposalId);
-    console.log("state : ", state);
+    // var votingDelay = await PrizeDAOGovernorContract.votingDelay();
+    // console.log("votingDelay : ", votingDelay);
 
-    // await moveBlocks(5 + 1);
-    var hasVoted = await PrizeDAOGovernorContract.hasVoted(
-        proposalId,
-        accounts[0].getAddress()
-    );
-    console.log("hasVoted : ", hasVoted);
+    // var votingPeriod = await PrizeDAOGovernorContract.votingPeriod();
+    // console.log("votingPeriod : ", votingPeriod);
 
-    var blockNum = await ethers.provider.getBlockNumber();
-    console.log("blockNum", blockNum);
-    // var proposalVotes = await PrizeDAOGovernorContract.proposalVotes(proposalId);
-    // console.log("proposalVotes : ", proposalVotes);
+    // var proposalSnapshot = await PrizeDAOGovernorContract.proposalSnapshot(proposalId);
+    // console.log("proposalSnapshot : ", proposalSnapshot);
 
-    var state = await PrizeDAOGovernorContract.state(proposalId);
-    console.log("state : ", state);
-    if (state === 4) {
-          var res = await PrizeDAOGovernorContract.execute(
-            [PrizeDAOGovernorContract.address],
-            [0],
-            [transferCalldata],
-            ethers.utils.keccak256(
-            ethers.utils.toUtf8Bytes("Hackathon 1")
-            )
-          );
-        }
+    // var proposalDeadline = await PrizeDAOGovernorContract.proposalDeadline(proposalId);
+    // console.log("proposalDeadline : ", proposalDeadline);
+
+    // var blockNum = await ethers.provider.getBlockNumber();
+    // var quorum = await PrizeDAOGovernorContract.quorum(blockNum - 1);
+    // console.log("quorum : ", quorum);
+
+    // var getVotes = await PrizeDAOGovernorContract.getVotes(
+    //     accounts[0].getAddress(),
+    //     blockNum - 1
+    // );
+    // console.log("accounts[0].getAddress(),", accounts[0].getAddress());
+    // console.log("getVotes for address 0 : ", getVotes);
+
+    // var getVotes2 = await PrizeDAOGovernorContract.getVotes(
+    //     accounts[1].getAddress(),
+    //     blockNum - 1
+    // );
+    // console.log("getVotes for address 1: ", getVotes2);
+
+
+    // var txn = await PrizeDAOGovernorContract.castVote(proposalId, 1);
+    // var rc = await txn.wait();
+    // const voteEvent = rc.events.find((event: any) => event.event === "VoteCast");
+    // console.log("voteEvent : ", voteEvent.args);
+
+    // var blockNum = await ethers.provider.getBlockNumber();
+    // console.log("blockNum", blockNum);
+    // await sleep(3000);
+    // var state = await PrizeDAOGovernorContract.state(proposalId);
+    // console.log("state : ", state);
+
+    // // await moveBlocks(5 + 1);
+    // var hasVoted = await PrizeDAOGovernorContract.hasVoted(
+    //     proposalId,
+    //     accounts[0].getAddress()
+    // );
+    // console.log("hasVoted : ", hasVoted);
+
+    // var blockNum = await ethers.provider.getBlockNumber();
+    // console.log("blockNum", blockNum);
+    // // var proposalVotes = await PrizeDAOGovernorContract.proposalVotes(proposalId);
+    // // console.log("proposalVotes : ", proposalVotes);
+
+    // var state = await PrizeDAOGovernorContract.state(proposalId);
+    // console.log("state : ", state);
+    // if (state === 4) {
+    //       var res = await PrizeDAOGovernorContract.execute(
+    //         [PrizeDAOGovernorContract.address],
+    //         [0],
+    //         [transferCalldata],
+    //         ethers.utils.keccak256(
+    //         ethers.utils.toUtf8Bytes("Hackathon 1")
+    //         )
+    //       );
+    //     }
 
 
 

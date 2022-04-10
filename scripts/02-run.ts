@@ -1,6 +1,6 @@
 import { Signer } from "ethers";
 import { ethers } from "hardhat";
-var daiToken = "0x162F058633293d247ce82d0766bf1d5b0d8bc348";
+var daiToken = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 const main = async () => {
   let accounts: Signer[];

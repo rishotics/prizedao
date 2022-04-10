@@ -178,14 +178,14 @@ function TaskDetail({ govContract, pDaoContract, ethWallet, daiContract }) {
                             <div className="card-body">
                                 <h5 className="card-title">{submission.name}</h5>
                                 <p className="card-text">
+                                    Submission #1
+                                </p>
+                                <p className="card-text">
                                     {submission.githubURL}
                                 </p>
                                 <p className="card-text">
                                     {submission.videoURL}
                                 </p>
-                                <button className="btn btn-primary" onClick={makeProposal}>
-                                    Vote
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -194,7 +194,7 @@ function TaskDetail({ govContract, pDaoContract, ethWallet, daiContract }) {
 
             <h2 className='text-center mt-1'>Governor</h2>
 
-            <div className="card">
+            <div className="card mb-5">
                 <div className="card-body">
                     <h5 className="card-title">Get PDAO</h5>
                     <div className='row'>
@@ -204,15 +204,27 @@ function TaskDetail({ govContract, pDaoContract, ethWallet, daiContract }) {
                         </div>
                         <div className="col-sm-12 col-md-6">
                             <div className="mb-3">
-                                <label htmlFor="name" className="form-label">DAI amount to swap for PDAO (1 DAI = 1 PDAO)</label>
+                                <label htmlFor="name" className="form-label">DAI amount to purchase for PDAO (1 DAI = 1 PDAO)</label>
                                 <input className="form-control" id="name" onChange={(e) => setAmount(e.target.value)}/>
                             </div>
                         
                             <button className="btn btn-primary" onClick={swap}>
-                                Swap
+                                Purchase
                             </button>
                         </div>
                     </div>
+                    <hr />
+                    <div className="mb-3">
+                        <label htmlFor="proposal" className="form-label">Proposal</label>
+                        <input className="form-control" id="proposal"/>
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="proposal" className="form-label">Choose Winner</label>
+                        <input className="form-control" id="proposal"/>
+                    </div>
+                    <button className="btn btn-primary" onClick={makeProposal}>
+                        Make Proposal 
+                    </button>
                 </div>
             </div>
         </div>

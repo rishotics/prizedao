@@ -15,7 +15,7 @@ function App() {
   const [maticBalance, setmaticBalance] = useState('');
   const [govContract, setGovContract] = useState('');
   const [daiContract, setDaiContract] = useState('');
-  const [pDaoContract, setPDaoContract] = useState(null)
+  const [pDaoContract, setPDaoContract] = useState('')
 
   return (
     <HashRouter>
@@ -32,6 +32,7 @@ function App() {
           path="/create-task"
           element={
             <CreateTask
+              ethWallet={ethWallet}
               govContract={govContract} />} />
         <Route
           path="/tasks"
@@ -43,7 +44,9 @@ function App() {
           element={
             <TaskDetail
               govContract={govContract}
-              pDaoContract={pDaoContract} />} />
+              pDaoContract={pDaoContract}
+              ethWallet={ethWallet}
+              daiContract={daiContract} />} />
         <Route
           path="/create-submission/:hackathonid/:userid"
           element={

@@ -9,6 +9,19 @@
         {
           "indexed": false,
           "internalType": "uint256",
+          "name": "currentProposalID",
+          "type": "uint256"
+        }
+      ],
+      "name": "CurrentProposalID",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
           "name": "HackathonId",
           "type": "uint256"
         }
@@ -77,6 +90,21 @@
               "internalType": "string",
               "name": "endDate",
               "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "proposalId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "sponsorAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "blockNum",
+              "type": "uint256"
             }
           ],
           "indexed": false,
@@ -93,12 +121,51 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "string",
+          "name": "hackerIpfsSubmission",
+          "type": "string"
+        }
+      ],
+      "name": "HackerIpfsSubmission",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
           "internalType": "uint256",
           "name": "HackerId",
           "type": "uint256"
         }
       ],
       "name": "HackerRegisted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "TotalVotesLastOptionGot",
+          "type": "uint256"
+        }
+      ],
+      "name": "NoHackerWon",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "numOfHackers",
+          "type": "uint256"
+        }
+      ],
+      "name": "NumOfHackers",
       "type": "event"
     },
     {
@@ -205,6 +272,19 @@
       "anonymous": false,
       "inputs": [
         {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "totalVotes",
+          "type": "uint256"
+        }
+      ],
+      "name": "TotalVotes",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
           "indexed": true,
           "internalType": "address",
           "name": "voter",
@@ -236,6 +316,32 @@
         }
       ],
       "name": "VoteCast",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "votesPresent",
+          "type": "uint256"
+        }
+      ],
+      "name": "VotesPresent",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "winnerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "WinnerIs",
       "type": "event"
     },
     {
@@ -304,6 +410,11 @@
           "internalType": "uint256",
           "name": "_prizeMoney",
           "type": "uint256"
+        },
+        {
+          "internalType": "address payable",
+          "name": "_sponsorAddress",
+          "type": "address"
         }
       ],
       "name": "add_hackathon",
@@ -537,9 +648,43 @@
           "internalType": "string",
           "name": "endDate",
           "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "proposalId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "sponsorAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "blockNum",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_hackathonId",
+          "type": "uint256"
+        }
+      ],
+      "name": "hackerHasRegisteredBefore",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -589,6 +734,21 @@
           "internalType": "string",
           "name": "endDate",
           "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "proposalId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "sponsorAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "blockNum",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",

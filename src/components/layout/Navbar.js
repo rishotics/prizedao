@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import Web3Modal from 'web3modal'
 
 import { COVALENT_APIKEY, GOVERNOR_CONTRACT_ADDRESS, DAI_ADDRESS, PDAO_ADRESS } from '../../config'
-import GovernorCountingSimpleSelf from '../../artifacts/contracts/GovernorCountingSimpleSelf.sol/GovernorCountingSimpleSelf.json';
+import PDAOToken from '../../artifacts/contracts/PDAOToken.sol/PDAOToken.json';
 import Dai from '../../artifacts/contracts/Test_Dai.sol/Dai.json';
 import PrizeDAOGovernor from '../../artifacts/contracts/PrizeDAOGovernor.sol/PrizeDAOGovernor.json';
 
@@ -37,8 +37,8 @@ function Navbar({
         let contract1 = new ethers.Contract(DAI_ADDRESS, Dai.abi, signer);
         setDaiContract(contract1);
 
-        let contract2 = new ethers.Contract(PDAO_ADRESS, PrizeDAOGovernor.abi, signer);
-        setPDaoContract(contract2);
+        let contract2 = new ethers.Contract(PDAO_ADRESS, PDAOToken.abi, signer);
+        //setPDaoContract(contract2);
 
         const res = await contract.hackathonId()
         console.log(res.toString())

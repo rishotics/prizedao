@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
  *
  * _Available since v4.3._
  */
-abstract contract GovernorCountingSimpleSelf is Governor {
+abstract contract GovernorCountingSimpleSelf is Governor{
     /**
      * @dev Supported vote types. Matches Governor Bravo ordering.
      */
@@ -43,6 +43,7 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         string endDate;
         uint256 proposalId;
         address sponsorAddress;
+        uint256 blockNum;
     }
 
     struct ProposalVote {
@@ -96,6 +97,21 @@ abstract contract GovernorCountingSimpleSelf is Governor {
     }
 
 
+    function hackerHasRegisteredBefore(uint256 _hackathonId)
+    public
+    returns(bool){
+        Hackathon storage hackathon = hackathonIdToHackathon[_hackathonId];
+        Hacker[] storage hackers = hackathon.hackers;
+        for(uint256 i =0; i<hackers.length; i++){
+            if(hackers[i].hackerAdd == msg.sender){
+                return true;
+            }
+        }
+        return false;
+        
+    }
+
+
     // /**
     //  * @dev Register new hacker 
     //  */
@@ -105,15 +121,15 @@ abstract contract GovernorCountingSimpleSelf is Governor {
     ) 
     public
     returns(uint256){
-            Hacker memory hacker;
-            
+            // require(!hackerHasRegisteredBefore(_hackathonId), "You are already registerd"); 
+            Hacker memory hacker;      
             hackerId.increment();
             hacker.hackerId = hackerId.current();
             hacker.hackerAdd = msg.sender;
             hacker.name = _name;
             hackathonIdToHackathon[_hackathonId].hackers.push(hacker);
             emit HackerRegisted(hackerId.current());
-            emit HackathonEvent(hackathonIdToHackathon[_hackathonId]);
+            // emit HackathonEvent(hackathonIdToHackathon[_hackathonId]);
             return hacker.hackerId;
     }
 
@@ -122,9 +138,10 @@ abstract contract GovernorCountingSimpleSelf is Governor {
     /**
      * @dev check if a user has registered for a hackathon
      */
-    function hasHackerRegistedForHackathon(
-        uint _hackathonId
-        ) public view returns (bool){
+    function hasHackerRegistedForHackathon(uint _hackathonId) 
+    public 
+    view 
+    returns (bool){
             bool result = false;
             Hacker[] storage hackers = hackathonIdToHackathon[_hackathonId].hackers;
             uint numOfHackers = hackers.length;
@@ -161,17 +178,18 @@ abstract contract GovernorCountingSimpleSelf is Governor {
 
     function _getHackerSubmission(uint256 _proposalId, uint256 _hackerId)
     internal
+    view
     returns(string memory){
         string memory submissionIpfsHash;
-        Hackathon storage hackathon = hackathonIdToHackathon[ProposalIdToHackathonId[_proposalId]];
-        Hacker[] storage hackers = hackathon.hackers;
+        Hackathon memory hackathon = hackathonIdToHackathon[ProposalIdToHackathonId[_proposalId]];
+        Hacker[] memory hackers = hackathon.hackers;
         for (uint256 i = 0; i <= hackers.length; i ++){
             if(hackers[i].hackerId == _hackerId){
                 submissionIpfsHash = hackers[i].ipfsHash;
                 break;
             }
         }
-        emit HackerIpfsSubmission(submissionIpfsHash);
+        // emit HackerIpfsSubmission(submissionIpfsHash);
         return submissionIpfsHash;
     }
 
@@ -196,20 +214,14 @@ abstract contract GovernorCountingSimpleSelf is Governor {
      * @dev See {Governor-_quorumReached}.
      */
     function _quorumReached(uint256 proposalId) internal view virtual override returns (bool) {
-        // ProposalVote storage proposalvote = _proposalVotes[proposalId];
-        // uint256 totalVotesCasted = 0;
-        // for(uint i=0;i<)
         return true;
-        // return quorum(proposalSnapshot(proposalId)) <= proposalvote.forVotes + proposalvote.abstainVotes;
     }
 
     /**
      * @dev See {Governor-_voteSucceeded}. In this module, the forVotes must be strictly over the againstVotes.
      */
     function _voteSucceeded(uint256 proposalId) internal view virtual override returns (bool) {
-        // ProposalVote storage proposalvote = _proposalVotes[proposalId];
         return true;
-        // return proposalvote.forVotes > proposalvote.againstVotes;
     }
 
     function _addNoneOfTheseHacker(uint256 _hackathonId)
@@ -221,17 +233,26 @@ abstract contract GovernorCountingSimpleSelf is Governor {
     function _mapProposalIdToHackathonId(uint256 _hackathonId, uint256 _proposalId) 
     internal {
         ProposalIdToHackathonId[_proposalId] = _hackathonId;
-        // mapping proposal id to its hackathon struct
         hackathonIdToHackathon[_hackathonId].proposalId = _proposalId;
+        hackathonIdToHackathon[_hackathonId].blockNum = block.number;
 
     }
 
+
+
     function _getProposalId(uint256 _hackathonId)
     internal
+    view
     returns(uint256){
-        uint256 proposalId = hackathonIdToHackathon[_hackathonId].proposalId;
-        emit CurrentProposalID(proposalId);
-        return proposalId;
+        return hackathonIdToHackathon[_hackathonId].proposalId;
+    }
+
+
+    function _getBlockNumber(uint256 _proposalId)
+    internal
+    view
+    returns(uint256){
+        return hackathonIdToHackathon[ProposalIdToHackathonId[_proposalId]].blockNum;
     }
 
 
@@ -252,14 +273,15 @@ abstract contract GovernorCountingSimpleSelf is Governor {
                 winnerAdd = hackers[i].hackerAdd;
             }
         }
-        emit TotalVotes(totalVotes);
+        // emit TotalVotes(totalVotes);
         // emit VotesPresent(hackers[1].votesGot);
+        
         // If None of these which is last option got more than equal to 60% votes sponsors get their money back
         if (hackers[hackers.length-1].votesGot >= totalVotes.div(5).mul(3)){
             emit NoHackerWon(hackers[hackers.length-1].votesGot);
             winnerAdd = hackathon.sponsorAddress;
         }
-        emit WinnerIs(winnerAdd);
+        // emit WinnerIs(winnerAdd);
         return  (winnerAdd, hackathon.prizeMoney*10);
     }
 

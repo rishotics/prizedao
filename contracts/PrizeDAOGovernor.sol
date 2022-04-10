@@ -98,15 +98,26 @@ contract PrizeDAOGovernor is
 
     function getHackerSubmission(uint256 _proposalId, uint256 _hackerId)
     public
+    view
     returns(string memory) {
         return _getHackerSubmission(_proposalId, _hackerId);
     }
 
     function getProposalId(uint256 _hackathonId)
     public
+    view
     returns(uint256){
         return _getProposalId(_hackathonId);
     }
+
+
+    function getBlockNumber(uint256 _proposalId)
+    public
+    view
+    returns(uint256){
+        return _getBlockNumber(_proposalId);
+    }
+
 
     function votingDelay()
         public

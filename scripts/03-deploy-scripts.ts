@@ -21,15 +21,15 @@ const main = async () => {
   console.log("tokenContract", tokenContract.address);
   console.log("[LOG] Token contract deployed");
 
-  var amt = await tokenContract.balanceOf(accounts[0].getAddress());
-  console.log("Amout of PDAO acc0 has:", amt) ;
+//   var amt = await tokenContract.balanceOf(accounts[0].getAddress());
+//   console.log("Amout of PDAO acc0 has:", amt) ;
 
-  await tokenContract.transfer(accounts[1].getAddress(), 1000000);
-  var amt = await tokenContract.balanceOf(accounts[1].getAddress());
-  console.log("Amout of PDAO acc1 has:", amt) ;
+//   await tokenContract.transfer(accounts[1].getAddress(), 1000000);
+//   var amt = await tokenContract.balanceOf(accounts[1].getAddress());
+//   console.log("Amout of PDAO acc1 has:", amt) ;
 
 
-  await tokenContract.delegate(accounts[0].getAddress());
+//   await tokenContract.delegate(accounts[0].getAddress());
 
   const PrizeDAOGovernorContract = await prizeDAOFactory.deploy(
     tokenContract.address,
@@ -39,11 +39,11 @@ const main = async () => {
   await PrizeDAOGovernorContract.deployed();
   console.log("PrizeDAOGovernorContract address", PrizeDAOGovernorContract.address);
 
-    var txn = await PrizeDAOGovernorContract.receiveEthForTransactions({
-        value: ethers.utils.parseEther("5"),
-    });
+    // var txn = await PrizeDAOGovernorContract.receiveEthForTransactions({
+    //     value: ethers.utils.parseEther("5"),
+    // });
 
-    await txn.wait();
+    // await txn.wait();
 
     var txn = await tokenContract.setMinterRole(PrizeDAOGovernorContract.address);
     await txn.wait();
@@ -103,21 +103,21 @@ const main = async () => {
     console.log("HackerId: ", HackerId);
 
 
-    var txn = await PrizeDAOGovernorContract.register_hacker(
-        "TestHackerr",
-        1
-    );
-    var rc = await txn.wait();
-    const event2 = rc.events.find(
-          (event: any) => event.event === "HackerRegisted"
-        );
-    const [HackerId2] = event2.args;
-    console.log("HackerId: ", HackerId2);
-    const event2hk = rc.events.find(
-        (event: any) => event.event === "HackathonEvent"
-      );
-    const [HackerId2hk] = event2hk.args;
-    // console.log("Hackathon is: ", HackerId2hk);
+    // var txn = await PrizeDAOGovernorContract.register_hacker(
+    //     "TestHackerr",
+    //     1
+    // );
+    // var rc = await txn.wait();
+    // const event2 = rc.events.find(
+    //       (event: any) => event.event === "HackerRegisted"
+    //     );
+    // const [HackerId2] = event2.args;
+    // console.log("HackerId: ", HackerId2);
+    // const event2hk = rc.events.find(
+    //     (event: any) => event.event === "HackathonEvent"
+    //   );
+    // const [HackerId2hk] = event2hk.args;
+    // // console.log("Hackathon is: ", HackerId2hk);
 
 
     var txn = await PrizeDAOGovernorContract.add_submission(
@@ -132,17 +132,17 @@ const main = async () => {
     const [HackerId3] = event3.args;
     console.log("Submission Done : ", HackerId3);
 
-    var txn = await PrizeDAOGovernorContract.add_submission(
-        2,
-        "xxxxxx",
-        1
-    );
-    var rc = await txn.wait();
-    const event4 = rc.events.find(
-          (event: any) => event.event === "SubmissionDone"
-        );
-    const [HackerId4] = event4.args;
-    console.log("Submission Done : ", HackerId4);
+    // var txn = await PrizeDAOGovernorContract.add_submission(
+    //     2,
+    //     "xxxxxx",
+    //     1
+    // );
+    // var rc = await txn.wait();
+    // const event4 = rc.events.find(
+    //       (event: any) => event.event === "SubmissionDone"
+    //     );
+    // const [HackerId4] = event4.args;
+    // console.log("Submission Done : ", HackerId4);
 
     const transferCalldata = PrizeDAOGovernorContract.interface.encodeFunctionData(
           "setWinnerAddress",
@@ -166,23 +166,25 @@ const main = async () => {
 
 
 // Get HackerIpfsSubmission
-    var txn = await PrizeDAOGovernorContract.getHackerSubmission(proposalId, HackerId4);
-    var rc = await txn.wait();
-    const e1 = rc.events.find(
-        (event: any) => event.event === "HackerIpfsSubmission"
-        );
-    const [hackerIpfsSubmission] = e1.args;
-    console.log("hackerIpfsSubmission : ", hackerIpfsSubmission)
+    var txn = await PrizeDAOGovernorContract.getHackerSubmission(proposalId, HackerId3);
+    // var rc = await txn.wait();
+    // const e1 = rc.events.find(
+    //     (event: any) => event.event === "HackerIpfsSubmission"
+    //     );
+    // const [hackerIpfsSubmission] = e1.args;
+    // console.log("hackerIpfsSubmission : ", hackerIpfsSubmission)
     
     
-    // Get CurrentProposalIDf
+    // // Get CurrentProposalIDf
     var txn = await PrizeDAOGovernorContract.getProposalId(HackathonId);
-    var rc = await txn.wait();
-    const e2 = rc.events.find(
-        (event: any) => event.event === "CurrentProposalID"
-        );
-    const [currproposalId1] = e2.args;
-    console.log("CurrentProposalID : ", currproposalId1)
+    var txn = await PrizeDAOGovernorContract.getBlockNumber(proposalId);
+
+    // var rc = await txn.wait();
+    // const e2 = rc.events.find(
+    //     (event: any) => event.event === "CurrentProposalID"
+    //     );
+    // const [currproposalId1] = e2.args;
+    // console.log("CurrentProposalID : ", currproposalId1)
 
     var state = await PrizeDAOGovernorContract.state(proposalId);
     console.log("state : ", state);
@@ -284,17 +286,17 @@ const main = async () => {
             )
           );
           var rc = await txn.wait();
-          const e10= rc.events.find(
-                    (event: any) => event.event === "WinnerIs"
-                    );
-          const [winnerAddress] = e10.args;
+        //   const e10= rc.events.find(
+        //             (event: any) => event.event === "WinnerIs"
+        //             );
+        //   const [winnerAddress] = e10.args;
 
-          const e11= rc.events.find(
-            (event: any) => event.event === "TotalVotes"
-            );
-          const [totalVotes] = e11.args;
-          console.log("TotalVotes : ", totalVotes);
-          console.log("winnerAddress : ", winnerAddress);
+        //   const e11= rc.events.find(
+        //     (event: any) => event.event === "TotalVotes"
+        //     );
+        //   const [totalVotes] = e11.args;
+        //   console.log("TotalVotes : ", totalVotes);
+        //   console.log("winnerAddress : ", winnerAddress);
           console.log("accounts[0].getAddress(),", accounts[0].getAddress());
 
         //   const e12 = rc.events.find(

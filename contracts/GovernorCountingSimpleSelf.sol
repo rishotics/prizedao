@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 /**
  * @dev Extension of {Governor} for simple, 3 options, vote counting.
@@ -23,6 +24,7 @@ abstract contract GovernorCountingSimpleSelf is Governor {
     using Counters for Counters.Counter;
     Counters.Counter public hackathonId;
     Counters.Counter public hackerId;
+    using SafeMath for uint256;
     
     struct Hacker{
         uint256 hackerId;
@@ -40,6 +42,7 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         string startDate;
         string endDate;
         uint256 proposalId;
+        address sponsorAddress;
     }
 
     struct ProposalVote {
@@ -63,12 +66,18 @@ abstract contract GovernorCountingSimpleSelf is Governor {
     event HackathonEvent( Hackathon hackathon);
     event HackerIpfsSubmission( string hackerIpfsSubmission);
     event CurrentProposalID( uint256 currentProposalID);
+    event TotalVotes ( uint256 totalVotes);
+    event NoHackerWon(uint256 TotalVotesLastOptionGot);
+    event WinnerIs( address winnerAddress);
+    event NumOfHackers( uint256 numOfHackers);
+    event VotesPresent( uint256 votesPresent);
 
     function add_hackathon(
         string memory _name, 
         string memory _startDate,
         string memory _endDate, 
-        uint _prizeMoney
+        uint _prizeMoney,
+        address payable _sponsorAddress
         ) 
     public 
     returns (uint) {
@@ -81,6 +90,7 @@ abstract contract GovernorCountingSimpleSelf is Governor {
                 hackathon.prizeMoney= _prizeMoney;
                 hackathon.startDate= _startDate;
                 hackathon.endDate= _endDate;
+                hackathon.sponsorAddress = _sponsorAddress;
                 emit HackathonCreated(hackathonId.current());
                 return hackathon.hackathonId;
     }
@@ -202,10 +212,18 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         // return proposalvote.forVotes > proposalvote.againstVotes;
     }
 
+    function _addNoneOfTheseHacker(uint256 _hackathonId)
+    internal{
+        uint256 hackerId = register_hacker("NoneOfTheAbove", _hackathonId);
+        add_submission(hackerId, "x", _hackathonId);
+    }
+
     function _mapProposalIdToHackathonId(uint256 _hackathonId, uint256 _proposalId) 
     internal {
         ProposalIdToHackathonId[_proposalId] = _hackathonId;
+        // mapping proposal id to its hackathon struct
         hackathonIdToHackathon[_hackathonId].proposalId = _proposalId;
+
     }
 
     function _getProposalId(uint256 _hackathonId)
@@ -217,22 +235,31 @@ abstract contract GovernorCountingSimpleSelf is Governor {
     }
 
 
-    function _setWinnerAddress(uint256 _hackathonId) 
-    view 
+    function _setWinnerAddress(uint256 _hackathonId)  
     internal 
     returns(address, uint256){
         Hackathon storage hackathon = hackathonIdToHackathon[_hackathonId];
 
         Hacker[] storage hackers = hackathon.hackers;
         uint256 winnerVotes = 0;
+        uint256 totalVotes = 0;
         address winnerAdd = address(0);
 
-        for (uint256 i = 1; i < hackers.length ; i++){
-            if(hackers[i].votesGot > winnerVotes ){
+        for (uint256 i = 1; i < hackers.length -1 ; i++){
+            totalVotes += hackers[i].votesGot;
+            if(hackers[i].votesGot > winnerVotes){
                 winnerVotes = hackers[i].votesGot;
                 winnerAdd = hackers[i].hackerAdd;
             }
         }
+        emit TotalVotes(totalVotes);
+        // emit VotesPresent(hackers[1].votesGot);
+        // If None of these which is last option got more than equal to 60% votes sponsors get their money back
+        if (hackers[hackers.length-1].votesGot >= totalVotes.div(5).mul(3)){
+            emit NoHackerWon(hackers[hackers.length-1].votesGot);
+            winnerAdd = hackathon.sponsorAddress;
+        }
+        emit WinnerIs(winnerAdd);
         return  (winnerAdd, hackathon.prizeMoney*10);
     }
 
@@ -255,9 +282,12 @@ abstract contract GovernorCountingSimpleSelf is Governor {
 
         Hacker[] storage hcks = hackathon.hackers;
         emit HackathonEvent(hackathon);
+        emit NumOfHackers(hcks.length);
          
-        if (support < hcks.length ){
+        //  when support == hcks.length i.e last element which is None of These.
+        if (support <= hcks.length ){
             hcks[support].votesGot += weight;
+            emit VotesPresent(hcks[support].votesGot);
         }
         else{
             revert("GovernorVotingSimple: invalid value for enum VoteType");

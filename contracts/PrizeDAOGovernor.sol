@@ -27,7 +27,7 @@ contract PrizeDAOGovernor is
     address _governanceToken;
 
     mapping(string => address) public acceptedProposal;
-    address winnerAddress = 0x0000000000000000000000000000000000000000;
+    address winnerAddress = address(0);
 
     constructor(
         ERC20Votes _token,
@@ -37,7 +37,7 @@ contract PrizeDAOGovernor is
         Governor(_name)
         GovernorSettings(
             0, /* 0 block by default for testing */
-            1, /* 3 min */
+            10, /* 15 sec */
             0
         )
         GovernorVotes(_token)
@@ -47,13 +47,20 @@ contract PrizeDAOGovernor is
         _governanceToken = address(_token);
     }
 
+    function giveApproval(uint256 _amount, address payable _spender) public {
+        
+        IERC20(_daiToken).approve(_spender, _amount);
+        
+    }
+
     function addMember(uint256 _amount) public {
         require(
             IERC20(_daiToken).allowance(msg.sender, address(this)) >= _amount,
             "DAI allowance not set"
         );
         IERC20(_daiToken).transferFrom(msg.sender, address(this), _amount);
-        ERC20Interface(_governanceToken).mint(address(msg.sender), _amount);
+        // IERC20(_daiToken).transfer(address(this), _amount);
+        // ERC20Interface(_governanceToken).mint(address(msg.sender), _amount);
     }
 
     function setWinnerAddress(uint256 _hackathonId) public {
@@ -70,6 +77,7 @@ contract PrizeDAOGovernor is
         uint256 hackathonId
     ) public returns (uint256) 
     {
+        _addNoneOfTheseHacker(hackathonId);
         uint256 proposalId = propose(targets, values, calldatas, description);
         _mapProposalIdToHackathonId(hackathonId, proposalId);
         return proposalId;

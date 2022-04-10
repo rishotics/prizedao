@@ -9,6 +9,7 @@ function TaskDetail({ govContract, pDaoContract }) {
     const [submissions, setSubmissions] = useState([])
     const [isRegisted, setIsRegisted] = useState(false)
     const [userId, setUserId] = useState('')
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         if(govContract) {
@@ -41,9 +42,6 @@ function TaskDetail({ govContract, pDaoContract }) {
         data = await data.json()
         console.log(data)
         setSubmissions([data])
-
-        const res = await pDaoContract._daiToken()
-        console.log(res)
     }
 
     const getIfRegistedForHackathon = async () => {
@@ -57,6 +55,8 @@ function TaskDetail({ govContract, pDaoContract }) {
     }
 
     const registerForHackathon = async () => {
+        setLoading(true)
+
         // string memory _name,
         // uint _hackathonId
         const transaction = await govContract.register_hacker("Guest", id)
@@ -64,6 +64,7 @@ function TaskDetail({ govContract, pDaoContract }) {
         console.log(tx)
 
         setIsRegisted(true)
+        setLoading(false)
     }
 
     return (
@@ -86,9 +87,11 @@ function TaskDetail({ govContract, pDaoContract }) {
                                 ? <button className="btn btn-primary" onClick={() => navigate(`/create-submission/${task.hackathonId}/${userId}`)}>
                                     Submit your Submission
                                 </button>
-                                : <button className="btn btn-primary" onClick={registerForHackathon}>
-                                    Register for Hackathon
-                                </button>
+                                : !loading
+                                    ? <button className="btn btn-primary" onClick={registerForHackathon}>
+                                        Register for Hackathon
+                                    </button>
+                                    : <p>Loading...</p>
                             }
                         </div>
                     </div>
@@ -110,7 +113,7 @@ function TaskDetail({ govContract, pDaoContract }) {
                                 <p className="card-text">
                                     {submission.videoURL}
                                 </p>
-                                <button className="btn btn-primary">
+                                <button className="btn btn-primary" >
                                     Vote
                                 </button>
                             </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { NFTStorage, File } from 'nft.storage'
 
 import { NFT_STRORAGE_APIKEY } from '../config'
@@ -6,6 +7,8 @@ import { NFT_STRORAGE_APIKEY } from '../config'
 const client = new NFTStorage({ token: NFT_STRORAGE_APIKEY })
 
 function CreateTask({ govContract }) {
+    const navigate = useNavigate()
+
     const [name, setName] = useState('')
     const [prize, setPrize] = useState('')
     const [description, setDescription] = useState('')
@@ -42,6 +45,7 @@ function CreateTask({ govContract }) {
             console.log(tx)
 
             setLoading(false)
+            navigate("/tasks")
         } catch(error) {
             console.error(error)
             setLoading(false)

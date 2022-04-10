@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { NFTStorage, File } from 'nft.storage'
 
 import { NFT_STRORAGE_APIKEY } from '../config'
@@ -8,6 +8,7 @@ const client = new NFTStorage({ token: NFT_STRORAGE_APIKEY })
 
 function CreateSubmission({ govContract }) {
     const { hackathonid, userid } = useParams()
+    const navigate = useNavigate()
 
     const [name, setName] = useState('')
     const [githubURL, setGithubURL] = useState('')
@@ -43,7 +44,7 @@ function CreateSubmission({ govContract }) {
             const transaction = await govContract.add_submission(userid, metadata, hackathonid)
             const tx = await transaction.wait()
             console.log(tx)
-
+            navigate("/task/" + hackathonid)
             setLoading(false);
         } catch(error) {
             console.error(error)

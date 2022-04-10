@@ -27,8 +27,12 @@ function Navbar({
         const address = await signer.getAddress();
         setEthWallet(address);
 
-        let contract = new ethers.Contract(GOVERNOR_CONTRACT_ADDRESS, GovernorCountingSimpleSelf.abi, signer);
+        let contract = new ethers.Contract(GOVERNOR_CONTRACT_ADDRESS, PrizeDAOGovernor.abi, signer);
         setGovContract(contract);
+        console.log("GOVERNOR_CONTRACT_ADDRESS", contract.interface.encodeFunctionData(
+            "setWinnerAddress",
+            [1]
+          ))
 
         let contract1 = new ethers.Contract(DAI_ADDRESS, Dai.abi, signer);
         setDaiContract(contract1);

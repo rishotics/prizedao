@@ -1,4 +1,4 @@
-# Battle Arena
+# Prize DAO
 
 <br/>
 <p align="center">

@@ -20,10 +20,5 @@ export default {
     hardhat: {
       allowUnlimitedContractSize: true,
     },
-    rinkeby: {
-      allowUnlimitedContractSize: true,
-      url: "https://rinkeby.infura.io/v3/fc67656cdc6e467c80dd1dfc6a7149f2",
-      accounts: [process.env.ACCOUNT_PRIVATE_KEY],
-    },
   },
 };

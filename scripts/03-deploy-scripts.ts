@@ -1,28 +1,35 @@
-import { Signer } from "ethers";
+import { Signer, utils } from "ethers";
 import { ethers } from "hardhat";
 import {moveBlocks} from "./move-blocks"
 var daiToken = "0x162F058633293d247ce82d0766bf1d5b0d8bc348";
 
 const main = async () => {
   let accounts: Signer[];
+
+  
   accounts = await ethers.getSigners();
+  const deployer = accounts[0];
+  const sponsor = accounts[1];
+  const hacker = accounts[2];
+
+  // console.log("accounts: ", accounts[0]);
 
   const tokenFactory = await ethers.getContractFactory("PDAOToken");
   const prizeDAOFactory = await ethers.getContractFactory("PrizeDAOGovernor");
-  const daiFactory = await ethers.getContractFactory("Dai");
+  // const daiFactory = await ethers.getContractFactory("Dai");
 
-  const daiContract = await daiFactory.deploy();
-  await daiContract.deployed();
-  console.log("daiContract", daiContract.address);
-  daiToken = daiContract.address;
+  // const daiContract = await daiFactory.deploy();
+  // await daiContract.deployed();
+  // console.log("daiContract", daiContract.address);
+  // daiToken = daiContract.address;
 
   const tokenContract = await tokenFactory.deploy();
   await tokenContract.deployed();
   console.log("tokenContract", tokenContract.address);
   console.log("[LOG] Token contract deployed");
 
-//   var amt = await tokenContract.balanceOf(accounts[0].getAddress());
-//   console.log("Amout of PDAO acc0 has:", amt) ;
+  // var amt = await tokenContract.balanceOf(accounts[0].getAddress());
+  // console.log("Amout of PDAO acc0 has:", amt) ;
 
 //   await tokenContract.transfer(accounts[1].getAddress(), 1000000);
 //   var amt = await tokenContract.balanceOf(accounts[1].getAddress());
@@ -33,8 +40,7 @@ const main = async () => {
 
   const PrizeDAOGovernorContract = await prizeDAOFactory.deploy(
     tokenContract.address,
-    "PrizeDAOGovernor",
-    daiToken
+    "PrizeDAOGovernor"
   );
   await PrizeDAOGovernorContract.deployed();
   console.log("PrizeDAOGovernorContract address", PrizeDAOGovernorContract.address);
@@ -50,8 +56,8 @@ const main = async () => {
 
     // IMP checking transfer of dai token from 0th account to governor
     // before creating hackathon we will do this only i.e tranfer DAI from sponsors account to governor
-    var txn = await daiContract.transfer(PrizeDAOGovernorContract.address, 10);
-    await txn.wait();
+    // var txn = await daiContract.transfer(PrizeDAOGovernorContract.address, 10);
+    // await txn.wait();
 
     // var txn = await PrizeDAOGovernorContract.giveApproval( 10,accounts[1].getAddress() );
     // var rc = await txn.wait();
@@ -62,32 +68,47 @@ const main = async () => {
     // console.log("Approval: ", approval);
 
 
-    // var txn = await PrizeDAOGovernorContract.addMember( 10 );
+    var txn = await PrizeDAOGovernorContract
+                    .connect(sponsor)
+                    .addSponsor({ value: ethers.utils.parseEther("10") });
     var rc = await txn.wait();
-    const event1111 = rc.events.find(
-          (event: any) => event.event === "Transfer"
+    const event_memberadded = rc.events.find(
+          (event: any) => event.event === "SponsorAdded"
         );
-    const [transfer] = event1111.args;
-    console.log("Transfer: ", transfer);
+    const [new_sponsor] = event_memberadded.args;
+    console.log("new_sponsor: ", new_sponsor);
 
 
-    var txn = await PrizeDAOGovernorContract.add_hackathon(
-        "Test1",
-        "2021-01-01",
-        "2021-02-01",
-        10,
-        accounts[1].getAddress()
-    );
+    var balanceOfSponsor = await tokenContract.balanceOf(sponsor.getAddress());
+    console.log("Balance Of Sponsor:", utils.formatEther(balanceOfSponsor));
+
+  
+
+    console.log('sponsor approving Governor to spend 100 PDAO');
+    await tokenContract.connect(sponsor).approve(PrizeDAOGovernorContract.address, utils.parseEther('100'));
+
+    const options_add_hackathon = {value: ethers.utils.parseEther("10")}
+    var txn = await PrizeDAOGovernorContract
+                    .connect(sponsor)
+                    .add_hackathon( 
+                                "Test1",
+                                "2021-01-01",
+                                "2021-02-01",
+                                100,
+                                sponsor.getAddress(),
+                                tokenContract.address,
+                                options_add_hackathon
+                      );
     var rc = await txn.wait();
-    const event = rc.events.find(
+    const event_hackathonCreated = rc.events.find(
           (event: any) => event.event === "HackathonCreated"
         );
-    const [HackathonId] = event.args;
+    const [HackathonId] = event_hackathonCreated.args;
     console.log("hackathonId: ", HackathonId);
 
 
-    var amt = await daiContract.balanceOf(PrizeDAOGovernorContract.address);
-    console.log("Amout of DAI recieved by governor from sponsor:", amt) ;
+    // var amt = await daiContract.balanceOf(PrizeDAOGovernorContract.address);
+    // console.log("Amout of DAI recieved by governor from sponsor:", amt) ;
 
 
 

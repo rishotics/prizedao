@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "contracts/PDAOToken.sol";
 
 /**
  * @dev Extension of {Governor}. Adapted from OpenZepplin and modified to our use case
@@ -63,8 +64,13 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         string memory _startDate,
         string memory _endDate,
         uint256 _prizeMoney,
-        address payable _sponsorAddress
-    ) public returns (uint256) {
+        address payable _sponsorAddress,
+        address _token
+    ) public payable returns (uint256) {
+        require( PDAOToken(_token).allowance(msg.sender, address(this)) >= _prizeMoney * 10 ** 18, 
+                 "Allowance not set");
+        bool success = PDAOToken(_token).transferFrom(msg.sender, address(this), _prizeMoney * 10**18);
+
         hackathonId.increment();
 
         Hackathon storage hackathon = hackathonIdToHackathon[

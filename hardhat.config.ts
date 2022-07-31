@@ -15,15 +15,14 @@ export default {
       },
     },
   },
-  defaultNetwork: "hardhat",
+  defaultNetwork: "mumbai",
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
     },
-    rinkeby: {
-      allowUnlimitedContractSize: true,
-      url: "https://rinkeby.infura.io/v3/fc67656cdc6e467c80dd1dfc6a7149f2",
-      accounts: [process.env.ACCOUNT_PRIVATE_KEY],
-    },
+    mumbai: {
+      url: process.env.MUMBAI_URL || '',
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+  },
   },
 };

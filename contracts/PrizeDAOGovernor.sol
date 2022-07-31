@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 // import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 import "contracts/GovernorCountingSimpleSelf.sol";
+import "contracts/PDAOToken.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
@@ -23,16 +24,19 @@ contract PrizeDAOGovernor is
     GovernorVotes,
     GovernorVotesQuorumFraction
 {
-    address _daiToken;
     address _governanceToken;
 
+    PDAOToken _pdao_token;
+
     mapping(string => address) public acceptedProposal;
+
+    event SponsorAdded(address new_sponsor);
+
     address winnerAddress = address(0);
 
     constructor(
         ERC20Votes _token,
-        string memory _name,
-        address _tokenToAccept
+        string memory _name
     )
         Governor(_name)
         GovernorSettings(
@@ -43,24 +47,22 @@ contract PrizeDAOGovernor is
         GovernorVotes(_token)
         GovernorVotesQuorumFraction(4)
     {
-        _daiToken = _tokenToAccept;
-        _governanceToken = address(_token);
+        // _daiToken = _tokenToAccept;
+        _pdao_token = PDAOToken(address(_token));
     }
 
-    function addMember(uint256 _amount) public {
-        require(
-            IERC20(_daiToken).allowance(msg.sender, address(this)) >= _amount,
-            "DAI allowance not set"
-        );
-        IERC20(_daiToken).transferFrom(msg.sender, address(this), _amount);
-        // IERC20(_daiToken).transfer(address(this), _amount);
-        // ERC20Interface(_governanceToken).mint(address(msg.sender), _amount);
+    function addSponsor() public payable {
+        require(msg.value >= 0.0001 ether, "please send atleast 10 MATIC");
+        _pdao_token.mint(msg.sender, msg.value * 10 ** 6);
+        sponsorsToAmount[msg.sender] = msg.value * 10;
+        emit SponsorAdded(msg.sender);
     }
 
     function setWinnerAddress(uint256 _hackathonId) public {
+        console.log("hackathon Id", _hackathonId);
         uint256 amount;
         (winnerAddress, amount) = _setWinnerAddress(_hackathonId);
-        disburseIncentive(amount, winnerAddress);
+        disburseIncentive(amount);
     }
 
     function createProposal(
@@ -76,9 +78,9 @@ contract PrizeDAOGovernor is
         return proposalId;
     }
 
-    function disburseIncentive(uint256 _amount, address _user) public {
+    function disburseIncentive(uint256 amount) public {
         require(winnerAddress != address(0), "Proposal not accepted");
-        ERC20Interface(_governanceToken).mint(address(_user), _amount * 10);
+        _pdao_token.mint(winnerAddress, amount * 10**18);
     }
 
     function receiveEthForTransactions() public payable {
@@ -146,4 +148,21 @@ contract PrizeDAOGovernor is
     {
         return super.proposalThreshold();
     }
+
+    function delegateVotes(address delegatee)
+        public
+        override
+    {
+        super.delegateVotes(delegatee);
+    }
+
+    function getPastTotalSupply(uint256 blockNumber)
+        public
+        view
+        override(GovernorVotes)
+        returns (uint256)
+    {
+        return super.getPastTotalSupply(blockNumber);
+    }
+    
 }

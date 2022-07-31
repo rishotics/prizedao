@@ -55,13 +55,10 @@ function CreateHackathon({ethWallet, govContract, pDaoContract}){
             })
             console.log(metadata);
 
-            const voting_Period = await govContract.votingPeriod();
-            console.log(`voting_Period = ${voting_Period}`)
-
             const pdao_address = await pDaoContract.address;
             console.log(`pdao_address: ${pdao_address}`);
 
-            await creating_hackathon(govContract, sponsor, name, "abcd", "abc",(+prizeMoney * 10 ** 18).toString(),pdao_address);
+            await creating_hackathon(govContract, sponsor, metadata.url, "abcd", "abc",(+prizeMoney * 10 ** 18).toString(),pdao_address, sponsorAddress);
             
             // const txn = await govContract.add_hackathon(name, 
             //     "abcd", 

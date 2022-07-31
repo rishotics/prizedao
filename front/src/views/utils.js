@@ -7,19 +7,19 @@ export const creating_hackathon = async(
     start_date,
     end_date,
     prize_money,
-    token_address
+    token_address,
+    sponsorAddress
   ) => {
-    console.log('Sponsor creating a hackathon!!');
-      const sponsor_address = await sponsor.getAddress();
+      console.log('Sponsor creating a hackathon!!');
+      console.log(`Name: ${hackathon_name} prize_money: ${prize_money} sponsor: ${sponsorAddress} pdao_add: ${token_address}`);
       var txn = await PrizeDAOGovernorContract
-                      .connect(sponsor)
                       .add_hackathon( 
                                   hackathon_name,
                                   start_date,
                                   end_date,
                                   prize_money, //PDAO tokens
-                                  sponsor_address,
-                                  token_address, {gasLimit: 1e7}
+                                  sponsorAddress,
+                                  token_address, {from: sponsorAddress ,gasLimit: 1e7}
                         );
       var rc = await txn.wait();
       const event_hackathonCreated = rc.events.find(

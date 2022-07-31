@@ -6,6 +6,7 @@ import Home from './views/Home';
 import Navbar from './components/layout/Navbar';
 import CreateHackathon from './views/CreateHackathon';
 import Faucet from './views/Faucet';
+import ListHackathons from './views/ListHackathons';
 
 function App() {
   const [ethWallet, setEthWallet] = useState('');
@@ -41,9 +42,9 @@ function App() {
             pDaoContract={pDaoContract}
             user={user}/>}/>
       <Route
-        path="/list-hackathons"
+        path="/hackathons"
         element={
-          <Faucet
+          <ListHackathons
             govContract={govContract}/>}/>
       <Route
         path="/"

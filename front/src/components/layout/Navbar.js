@@ -54,7 +54,7 @@ function Navbar({
                             <Link className="text-dark nav-link" aria-current="page" to="/">Home</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="text-dark nav-link" aria-current="page" to="/tasks">Hackathons</Link>
+                            <Link className="text-dark nav-link" aria-current="page" to="/hackathons">Hackathons</Link>
                         </li>
                         <li className="nav-item">
                             <Link className="text-dark nav-link" aria-current="page" to="/create-hackathon">Create Hackathon</Link>

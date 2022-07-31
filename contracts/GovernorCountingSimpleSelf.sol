@@ -46,6 +46,7 @@ abstract contract GovernorCountingSimpleSelf is Governor {
     mapping(uint256 => uint256) public ProposalIdToHackathonId;
     mapping(uint256 => bool) proposalState;
     mapping(uint256 => ProposalVote) private _proposalVotes;
+    mapping(address => uint256) public sponsorsToAmount;
 
     event HackathonCreated(uint256 HackathonId);
     event HackerRegisted(uint256 HackerId);
@@ -67,9 +68,9 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         address payable _sponsorAddress,
         address _token
     ) public payable returns (uint256) {
-        require( PDAOToken(_token).allowance(msg.sender, address(this)) >= _prizeMoney * 10 ** 18, 
-                 "Allowance not set");
-        bool success = PDAOToken(_token).transferFrom(msg.sender, address(this), _prizeMoney * 10**18);
+        // require( PDAOToken(_token).allowance(msg.sender, address(this)) >= _prizeMoney * 10 ** 18, 
+        //          "Allowance not set");
+        // bool success = PDAOToken(_token).transferFrom(msg.sender, address(this), _prizeMoney * 10**18);
 
         hackathonId.increment();
 
@@ -275,6 +276,7 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         Hackathon storage hackathon = hackathonIdToHackathon[_hackathonId];
 
         Hacker[] storage hackers = hackathon.hackers;
+        console.log("Vote for None of these", hackers[hackers.length - 1].votesGot);
         uint256 winnerVotes = 0;
         uint256 totalVotes = 0;
         address winnerAdd = address(0);
@@ -295,8 +297,11 @@ abstract contract GovernorCountingSimpleSelf is Governor {
             winnerAdd = hackathon.sponsorAddress;
         }
         // emit WinnerIs(winnerAdd);
-        return (winnerAdd, hackathon.prizeMoney * 10);
+        console.log("Winner address", winnerAdd, "prize money:", hackathon.prizeMoney);
+        return (winnerAdd, hackathon.prizeMoney);
     }
+
+    
 
     /**
      * @dev See {Governor-_countVote}. In this module, the support follows the `VoteType` enum (from Governor Bravo).

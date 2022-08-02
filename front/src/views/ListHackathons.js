@@ -6,7 +6,7 @@ import {creating_hackathon} from './utils';
 import Web3Modal from 'web3modal'
 
 
-function ListHackathons ({govContract}){
+function ListHackathons ({govContract, currHackId, serCurrHackId}){
     const navigate = useNavigate();
     const [hacks, setHacks] = useState([])
     useEffect(()=> {
@@ -62,7 +62,9 @@ function ListHackathons ({govContract}){
                                 <p className="card-text">
                                     End on {hack.endDate}
                                 </p>
-                                <button className="btn btn-primary">
+                                <button className="btn btn-primary" onClick={() => 
+                                        navigate('hackathons/'+hack.hackathonId)
+                                    }>
                                     View
                                 </button>
                             </div>
@@ -70,9 +72,15 @@ function ListHackathons ({govContract}){
                     </div>
                 ))}
             </div>
-            <h1 className='mt-2'>
-                Apply soon
-            </h1>
+            {
+                hacks.length > 0
+                ?<h4 className='mt-2'>
+                    Apply soon!
+                    </h4>
+                :<h4 className='mt-2'>
+                    No active hackathons!
+                    </h4>
+            }
         </div>
     );
 

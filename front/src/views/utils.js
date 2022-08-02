@@ -1,5 +1,8 @@
 import { ethers } from 'ethers'
 
+export const GOVERNOR_CONTRACT_ADDRESS = '0x536ccb4A799e49F8357C1e86396E1c6aA0451a07';
+export const PDAO_ADRESS = '0x87086dc8Adc22a21085b0cEc43Eded0E1a0188A2';
+
 export const creating_hackathon = async(
     PrizeDAOGovernorContract,
     sponsor,

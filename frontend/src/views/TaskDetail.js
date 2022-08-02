@@ -14,7 +14,8 @@ function TaskDetail({ govContract, pDaoContract, ethWallet, daiContract }) {
     const [loading, setLoading] = useState(false)
     const [daiBalance, setDaiBalance] = useState('')
     const [pDaoBalance, setpDaoBalance] = useState('')
-    const [amount, setAmount] = useState('')
+    const [amount, setAmount] = useState('');
+    
 
     useEffect(() => {
         if(govContract) {
@@ -32,7 +33,7 @@ function TaskDetail({ govContract, pDaoContract, ethWallet, daiContract }) {
             getPDAOBalance()
         }
     }, [daiContract, pDaoContract])
-
+    
     useEffect(() => {
         
     }, [pDaoContract])
@@ -86,7 +87,8 @@ function TaskDetail({ govContract, pDaoContract, ethWallet, daiContract }) {
 
         const userId = await govContract.hackerId()
         console.log(userId.toString())
-        setUserId(userId)
+        setUserId(userId);
+
     }
 
     const registerForHackathon = async () => {
@@ -132,8 +134,9 @@ function TaskDetail({ govContract, pDaoContract, ethWallet, daiContract }) {
         const e = rc.events.find(
             (event) => event.event === "ProposalCreated"
             );
-        const [proposalId] = e.args;
-        console.log("Proposal Id: ", proposalId.toString())
+        const [pid] = e.args;
+        console.log("Proposal Id: ", pid.toString())
+        setProposalMade(pid)
     }
 
     return (
@@ -222,7 +225,10 @@ function TaskDetail({ govContract, pDaoContract, ethWallet, daiContract }) {
                         <label htmlFor="proposal" className="form-label">Choose Winner</label>
                         <input className="form-control" id="proposal"/>
                     </div>
-                    <button className="btn btn-primary" onClick={makeProposal}>
+                    {
+                        proposalId>0
+                            ?
+                    }<button className="btn btn-primary" onClick={makeProposal}>
                         Make Proposal 
                     </button>
                 </div>

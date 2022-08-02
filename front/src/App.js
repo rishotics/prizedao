@@ -7,6 +7,8 @@ import Navbar from './components/layout/Navbar';
 import CreateHackathon from './views/CreateHackathon';
 import Faucet from './views/Faucet';
 import ListHackathons from './views/ListHackathons';
+import HackathonDetail from './views/HackathonDetail';
+import CreateSubmission from './views/CreateSubmission';
 
 function App() {
   const [ethWallet, setEthWallet] = useState('');
@@ -45,7 +47,21 @@ function App() {
         path="/hackathons"
         element={
           <ListHackathons
-            govContract={govContract}/>}/>
+            govContract={govContract}
+            />}/>
+      <Route
+        path="/hackathons/:id"
+        element={
+          <HackathonDetail
+          pDaoContract={pDaoContract}
+          ethWallet={ethWallet}
+          govContract={govContract}
+          />}/>
+      <Route
+          path="/create-submission/:hackathonid/:userid"
+          element={
+            <CreateSubmission
+              govContract={govContract} />} />
       <Route
         path="/"
         element={

@@ -71,6 +71,7 @@ function CreateHackathon({ethWallet, govContract, pDaoContract}){
             // console.log(`txn create hackathon= ${rc}`);
 
             setUrl(metadata.url);
+            navigate("/hackathons");
             setLoading(false);
         } catch(error){
             console.log(`Error in create_hackathon ${error}`)

@@ -42,6 +42,7 @@ function ListHackathons ({govContract, currHackId, serCurrHackId}){
                 data.endDate = hackathon.endDate;
                 console.log(data);
                 temp.push(data);
+                console.log(`Hackathon in list: ${JSON.stringify(data)}`)
             }
             setHacks(temp)
         }

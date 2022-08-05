@@ -22,8 +22,31 @@ function HackathonDetail({pDaoContract, ethWallet, govContract}) {
         if(govContract){
             getHackathonData();
             getIfRegistedForHackathon();
+            getHackers();
         }
     },[govContract])
+
+    const ifProposalNotMade = proposalId == 0;
+    const ifProposalMadeAndReadyToVote = proposalId >0 && votingState == 1;
+
+
+    const getHackers = async() => {
+        const temp = []
+        const hcks = {
+            "name": "H1",
+            "hackerId": "1",
+            "ipfsHash": "dqsawd",
+            "hackerAdd": "0x1AEb23bdC154f227De6b009936e1eBc0D4a9db20"
+          }
+        
+        temp.push(hcks);
+        setHackers(temp);
+        
+        hackers.map((hacker) => (
+            console.log(`Hacker name: ${hacker.name}`)
+            
+        ))
+    }
 
     const getIfRegistedForHackathon = async () => {
         const res = await govContract.hasHackerRegistedForHackathon(id)
@@ -98,6 +121,12 @@ function HackathonDetail({pDaoContract, ethWallet, govContract}) {
         const [proposalId] = e.args;
         console.log("Proposal Id: ", proposalId.toString())
     }
+
+    const voteForHacker = async() => {
+
+    }
+
+
     
 
     return(
@@ -139,12 +168,30 @@ function HackathonDetail({pDaoContract, ethWallet, govContract}) {
                 <div className="card mb-5">
                     <div className="card-body">
                         
-                        {proposalId && <button className="btn btn-primary" onClick={makeProposal}>
+                        {ifProposalNotMade && <button className="btn btn-primary" onClick={makeProposal}>
                                 Make Proposal
                         </button>}
                     </div>
-
                 </div>
+                    <div className="row mt-3">
+                        {hackers.map(hacker => (
+                            <div className="col-sm-12 col-md-6 col-lg-3 mb-3" key={hacker.hackerId}> 
+                                <div className="card"> 
+                                    <div className="card-body"> 
+                                        <h5 className="card-title">{hacker.name}</h5>
+                                        <p className="card-text">
+                                            Hacker Submission: {hacker.ipfsHash}   
+                                        </p>
+                                        <button className="btn btn-primary">
+                                            Vote
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                
 
 
 

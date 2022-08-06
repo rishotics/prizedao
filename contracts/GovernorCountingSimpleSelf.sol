@@ -43,6 +43,8 @@ abstract contract GovernorCountingSimpleSelf is Governor {
 
     mapping(uint256 => Hackathon) public hackathonIdToHackathon;
     mapping(uint256 => Hackathon) public hackerIdToHackathon;
+    mapping(uint256 => uint256[]) public hackathonIdToHackerIds;
+    mapping(uint256 => Hacker) public hackerIdToHacker;
     mapping(uint256 => uint256) public ProposalIdToHackathonId;
     mapping(uint256 => bool) proposalState;
     mapping(uint256 => ProposalVote) private _proposalVotes;
@@ -116,6 +118,8 @@ abstract contract GovernorCountingSimpleSelf is Governor {
         hacker.hackerAdd = msg.sender;
         hacker.name = _name;
         hackathonIdToHackathon[_hackathonId].hackers.push(hacker);
+
+        hackerIdToHacker[hackerId.current()] = hacker;
         emit HackerRegisted(hackerId.current());
         // emit HackathonEvent(hackathonIdToHackathon[_hackathonId]);
         return hacker.hackerId;
@@ -161,6 +165,7 @@ abstract contract GovernorCountingSimpleSelf is Governor {
                 break;
             }
         }
+        hackathonIdToHackerIds[_hackathonId].push(_hackerId);
         emit SubmissionDone(_hackerId);
     }
 

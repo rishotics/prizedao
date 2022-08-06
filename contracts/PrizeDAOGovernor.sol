@@ -104,6 +104,17 @@ contract PrizeDAOGovernor is
         return _getBlockNumber(_proposalId);
     }
 
+    function getHackersIdsForHackathon(uint256 _hackathonId) public view returns (uint[] memory hackerIds){
+        return hackathonIdToHackerIds[_hackathonId];
+    }
+
+    function getHackerList(uint256 _hackerId) public view returns (string memory name, string memory ipfsHash){
+        Hacker memory h = hackerIdToHacker[_hackerId];
+        name = h.name;
+        ipfsHash = h.ipfsHash;
+    }
+
+
     function votingDelay()
         public
         view

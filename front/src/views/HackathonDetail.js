@@ -6,6 +6,14 @@ import {creating_hackathon} from './utils';
 import Web3Modal from 'web3modal'
 import {GOVERNOR_CONTRACT_ADDRESS} from './utils'
 
+
+const CastVote = (props) => {
+    <button className="btn btn-primary" onClick={() => props.onClick(props.choice)}>
+        Vote
+    </button>
+    
+}
+
 function HackathonDetail({pDaoContract, ethWallet, govContract}) {
     const { id } = useParams()
     const navigate = useNavigate()
@@ -31,6 +39,16 @@ function HackathonDetail({pDaoContract, ethWallet, govContract}) {
 
 
     const getHackers = async() => {
+        const h = await govContract.getHackersIdsForHackathon(id);
+        console.log('Hackers ids')
+        console.log(h.toString())
+        const h1 = h[2].toString();
+        console.log(`h1: ${h1}`)
+        for(let i=1;i <= +h1; i++){
+            const de = await govContract.getHackerList(i);
+            console.log(`details`)
+            console.log(de)
+        }
         const temp = []
         const hcks = {
             "name": "H1",
@@ -39,7 +57,15 @@ function HackathonDetail({pDaoContract, ethWallet, govContract}) {
             "hackerAdd": "0x1AEb23bdC154f227De6b009936e1eBc0D4a9db20"
           }
         
+        const hcks2 = {
+            "name": "H2",
+            "hackerId": "2",
+            "ipfsHash": "ajnfao",
+            "hackerAdd": "0x1AEb23bdC154f227De6b009936e1eBc0D4a9db21"
+          }
+
         temp.push(hcks);
+        temp.push(hcks2);
         setHackers(temp);
         
         hackers.map((hacker) => (
@@ -122,8 +148,14 @@ function HackathonDetail({pDaoContract, ethWallet, govContract}) {
         console.log("Proposal Id: ", proposalId.toString())
     }
 
-    const voteForHacker = async() => {
-
+    const voteForHim = async(choice) => {
+        if(proposalId > 0){
+            console.log(`Voting for : ${choice}`)
+            var txn = await govContract.castVote(proposalId, choice);
+            await txn.wait()   
+        } else {
+            console.log(`Proposal Not made`)
+        }
     }
 
 
@@ -182,7 +214,7 @@ function HackathonDetail({pDaoContract, ethWallet, govContract}) {
                                         <p className="card-text">
                                             Hacker Submission: {hacker.ipfsHash}   
                                         </p>
-                                        <button className="btn btn-primary">
+                                        <button className="btn btn-primary" onClick={() => voteForHim(hacker.hackerId)}>
                                             Vote
                                         </button>
                                     </div>
@@ -190,11 +222,6 @@ function HackathonDetail({pDaoContract, ethWallet, govContract}) {
                             </div>
                         ))}
                     </div>
-
-                
-
-
-
         </div>
     )
 }
